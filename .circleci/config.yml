@@ -1,18 +1,30 @@
-version: 2.1
-jobs:
-    trial:
-      docker:
-            - image: circleci/ruby:2.5.3
-      parallelism: 16
-      steps:
-        - run:
-            name: Install Dependencies
-            command: |
-              lscpu
-              echo Hello,subscribe it
+name: WindowsCRD
 
-workflows:
-    version: 2.1
-    build:
-        jobs:
-        - trial
+on: 
+  workflow_dispatch:
+    inputs:
+      authcode:
+        description: 'Enter CRD code'
+        required: true
+      pincode:
+        description: 'Six digit Pin'
+        required: true
+        default: '123456'
+  
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 9999
+ 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download 
+      run: ./setup.ps1
+    - name: Setup
+      run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
+    - name: .
+      run: cmd /c wallpaper.bat
+    - name: Done
+      run: cmd /c wallpaper.bat
+    - name: Done
+      run: ./loop.ps1
